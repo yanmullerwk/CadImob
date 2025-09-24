@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PessoasController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -25,8 +26,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//Rotas Pessoas
 
-Route::get('/pessoas', [PessoasController::class, 'index'])->name('pessoas.index');
+//Rota home
+Route::get('/home', [HomeController::class, 'index'])->name('home.index');
+//Rotas Pessoas
+Route::prefix('pessoas')->group(function(){
+    Route::get('/', [PessoasController::class, 'index'])->name('pessoas.index');
+    Route::get('/create', [PessoasController::class, 'create'])->name('pessoas.create');//leva pro meu forms
+    Route::post('/',[PessoasController::class, 'store'])->name('pessoas.store');
+});
+
 
 require __DIR__.'/auth.php';
