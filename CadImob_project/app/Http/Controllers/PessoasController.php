@@ -40,7 +40,7 @@ class PessoasController extends Controller
     }
 
     function create(){
-        return Inertia::render('Pessoas/PessoasCreatePage');
+        return Inertia::render('Pessoas/PessoasCadastroPage');
     }
 
     function store(Request $request){

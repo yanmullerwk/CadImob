@@ -20,6 +20,7 @@
 </template>
 
 <script setup>
+  import { defineProps } from 'vue';
   //props para table default
   const props = defineProps({
     items: {

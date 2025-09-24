@@ -17,7 +17,7 @@
     </v-app>
 </template>
 <script setup>
-    import LayoutPaginas from '@/Components/LayoutPaginas.vue';
+    import LayoutPaginas from '@/Components/MyComps/LayoutPaginas.vue';
     import { defineProps, ref } from "vue";
     import { router } from '@inertiajs/vue3';
     import DefaultTable from '@/Components/MyComps/DefaultTable.vue';
