@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePessoasRequest;
 use App\Models\Pessoa;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -12,46 +13,26 @@ class PessoasController extends Controller
 {
     public function index()
     {
-        // Dados fictícios, como se tivessem sido buscados no banco de dados
-        $pessoas = [
-            [
-                'id' => 1,
-                'nome' => 'Ana Paula',
-                'cpf' => '123.456.789-01'
-            ],
-            [
-                'id' => 2,
-                'nome' => 'João Silva',
-                'cpf' => '987.654.321-09'
-            ],
-            [
-                'id' => 3,
-                'nome' => 'Maria Oliveira',
-                'cpf' => '111.222.333-44'
-            ],
-           
-        ];
+        $pessoas = Pessoa::all();
 
-        // O Inertia é o elo de ligação.
-        // Ele renderiza a página 'Dashboard.vue' e passa o array de 'pessoas' como um 'prop'.
         return Inertia::render('Pessoas/PessoasPage', [
             'pessoas' => $pessoas,
         ]);
     }
 
-    function create(){
+    public function create(){
         return Inertia::render('Pessoas/PessoasCadastroPage');
     }
 
-    function store(Request $request){
-        $pessoa = new Pessoa;
-        $pessoa->nome = $request->nome;
-        $pessoa->data_nascimento = $request->data_nascimento;
-        $pessoa->cpf = $request->cpf;
-        $pessoa->sexo = $request->sexo;
-        $pessoa->telefone = $request->telefone;
-        $pessoa->email = $request->email;
-
-        $pessoa->save();
+    public function store(StorePessoasRequest $request){//fazer o request especifico para validar
+        $pessoa = $request->validated();
+        Pessoa::create($pessoa);
     }
+
+    public function edit($id){
+        $pessoa = Pessoa::findOrFail($id);
+        return Inertia::render('Pessoas/PessoasEditPage', ['pessoa'=>$pessoa]);
+    }
+
+    
 }

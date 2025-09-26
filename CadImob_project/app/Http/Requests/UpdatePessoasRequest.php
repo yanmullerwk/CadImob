@@ -21,17 +21,12 @@ class UpdatePessoasRequest extends FormRequest
      */
     public function rules(): array
     {
-       // Obtém o ID da pessoa que está sendo atualizada
-        $pessoaId = $this->route('pessoa')->id;
-
-        // return [
-        //     'nome' => ['required', 'string', 'max:255'],
-        //     'data_nascimento' => ['required', 'date'],
-        //     // Ignora o CPF único para o registro atual
-        //     'cpf' => ['required', 'string', 'unique:pessoas,cpf,' . $pessoaId],
-        //     'sexo' => ['required', 'string', 'in:M,F,O'],
-        //     'telefone' => ['nullable', 'string', 'max:20'],
-        //     'email' => ['nullable', 'string', 'email'],
-        // ];
+        return [
+            'nome' => ['required', 'string', 'max:255'],
+            'dataNascimento' => ['required', 'date'],
+            'sexo' => ['required', 'string', 'in:M,F,O'],
+            'telefone' => ['nullable', 'string', 'max:20'],
+            'email' => ['nullable', 'string', 'email'],
+        ];
     }
 }

@@ -11,7 +11,7 @@ class StorePessoasRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; //por enquanto true
+        return true;
     }
 
     /**
@@ -21,13 +21,20 @@ class StorePessoasRequest extends FormRequest
      */
     public function rules(): array
     {
-        // [return [
-        //     'nome' => ['required', 'string', 'max:255'],
-        //     'data_nascimento' => ['required', 'date'],
-        //     'cpf' => ['required', 'string', 'unique:pessoas,cpf'], // CPF único na tabela
-        //     'sexo' => ['required', 'string', 'in:M,F,O'],
-        //     'telefone' => ['nullable', 'string', 'max:20'],
-        //     'email' => ['nullable', 'string', 'email'],
-        // ];]
+        return [
+            'nome' => ['required', 'string', 'max:255'],
+            'dataNascimento' => ['required', 'date'],
+            'cpf' => ['required', 'numeric', 'unique:pessoas,cpf'], // CPF único na tabela
+            'sexo' => ['required', 'string', 'in:M,F,O'],
+            'telefone' => ['nullable', 'numeric'],
+            'email' => ['nullable', 'string','email:rfc,dns'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'nome.required'=>'O campo nome é obrigatorio!',
+        ];
     }
 }

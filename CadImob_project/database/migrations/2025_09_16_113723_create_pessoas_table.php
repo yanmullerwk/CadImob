@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pessoas', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
-            $table->date('data_nascimento');
+            $table->date('dataNascimento');
             $table->string('cpf', 11)->unique();
             $table->enum('sexo',['M','F', 'O']);
             $table->string('telefone',20)->nullable();

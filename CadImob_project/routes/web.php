@@ -6,6 +6,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
+ 
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -33,7 +35,10 @@ Route::get('/home', [HomeController::class, 'index'])->name('home.index');
 Route::prefix('pessoas')->group(function(){
     Route::get('/', [PessoasController::class, 'index'])->name('pessoas.index');
     Route::get('/create', [PessoasController::class, 'create'])->name('pessoas.create');//leva pro meu forms
-    Route::post('/',[PessoasController::class, 'store'])->name('pessoas.store');
+    Route::post('/',[PessoasController::class, 'store'])->name('pessoas.store')->middleware([HandlePrecognitiveRequests::class]);
+    Route::put('/{id}', [PessoasController::class, 'update'])->name('pessoas.update');
+    Route::get('/{id}/edit', [PessoasController::class, 'edit'])->name('pessoas.edit');
+    Route::delete('/{id}', [PessoasController::class, 'destroy'])->name('pessoas.destroy');
 });
 
 

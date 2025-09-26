@@ -9,7 +9,9 @@
                     </v-btn>
                 </template>
                 <template #item-actions="{ item }">
-                    <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+                    <Link :href="Route(pessoas.edit, id)">
+                        <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+                    </Link>
                     <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
                 </template>
             </DefaultTable>
@@ -19,7 +21,7 @@
 <script setup>
     import LayoutPaginas from '@/Components/MyComps/LayoutPaginas.vue';
     import { defineProps, ref } from "vue";
-    import { router } from '@inertiajs/vue3';
+    import { router, Link } from '@inertiajs/vue3';
     import DefaultTable from '@/Components/MyComps/DefaultTable.vue';
 
     const props = defineProps ({

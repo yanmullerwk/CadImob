@@ -11,12 +11,12 @@ class Pessoa extends Model
 
     // Campos que podem ser preenchidos em massa (security first!)
     protected $fillable = [
-        'nome', 'data_nascimento', 'cpf', 'sexo', 'telefone', 'email',
+        'nome', 'dataNascimento', 'cpf', 'sexo', 'telefone', 'email',
     ];
 
     // Converte a data_nascimento para um objeto de data automaticamente
     protected $casts = [
-        'data_nascimento' => 'date:d-m-Y',
+        'dataNascimento' => 'date:d-m-Y',
     ];
 
 }
