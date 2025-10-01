@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <LayoutPaginas>
-            <BasePessoasForm :isEdit="true" :pessoa="pessoa"/>
+            <BasePessoasForm :isEdit="true" :pessoa="pessoa" :titleForm="formName"/>
         </LayoutPaginas>
     </v-app>
 </template>
@@ -11,4 +11,6 @@ import BasePessoasForm from '@/Components/MyComps/BasePessoasForm.vue';
 const props = defineProps({
     pessoa: Object
 });
+
+const formName = "Editar"
 </script>

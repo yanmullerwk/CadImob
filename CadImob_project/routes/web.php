@@ -9,7 +9,7 @@ use Inertia\Inertia;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
  
 
-Route::get('/', function () {
+Route::get('/welcome', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -30,13 +30,13 @@ Route::middleware('auth')->group(function () {
 
 
 //Rota home
-Route::get('/home', [HomeController::class, 'index'])->name('home.index');
+Route::get('/', [HomeController::class, 'index'])->name('home.index');
 //Rotas Pessoas
 Route::prefix('pessoas')->group(function(){
     Route::get('/', [PessoasController::class, 'index'])->name('pessoas.index');
     Route::get('/create', [PessoasController::class, 'create'])->name('pessoas.create');//leva pro meu forms
     Route::post('/',[PessoasController::class, 'store'])->name('pessoas.store')->middleware([HandlePrecognitiveRequests::class]);
-    Route::put('/{id}', [PessoasController::class, 'update'])->name('pessoas.update');
+    Route::put('/{id}', [PessoasController::class, 'update'])->name('pessoas.update')->middleware([HandlePrecognitiveRequests::class]);
     Route::get('/{id}/edit', [PessoasController::class, 'edit'])->name('pessoas.edit');
     Route::delete('/{id}', [PessoasController::class, 'destroy'])->name('pessoas.destroy');
 });

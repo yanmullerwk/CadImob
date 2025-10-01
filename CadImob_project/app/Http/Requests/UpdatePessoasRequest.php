@@ -11,7 +11,7 @@ class UpdatePessoasRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,7 @@ class UpdatePessoasRequest extends FormRequest
         return [
             'nome' => ['required', 'string', 'max:255'],
             'dataNascimento' => ['required', 'date'],
-            'sexo' => ['required', 'string', 'in:M,F,O'],
+            'sexo' => ['required', 'string', 'in:Masculino,Feminino,Outro'],
             'telefone' => ['nullable', 'string', 'max:20'],
             'email' => ['nullable', 'string', 'email'],
         ];

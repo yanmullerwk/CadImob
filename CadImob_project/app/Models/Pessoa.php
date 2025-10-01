@@ -14,9 +14,4 @@ class Pessoa extends Model
         'nome', 'dataNascimento', 'cpf', 'sexo', 'telefone', 'email',
     ];
 
-    // Converte a data_nascimento para um objeto de data automaticamente
-    protected $casts = [
-        'dataNascimento' => 'date:d-m-Y',
-    ];
-
 }

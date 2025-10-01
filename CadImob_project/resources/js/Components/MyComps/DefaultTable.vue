@@ -9,10 +9,37 @@
         <!--area para o botão de cadastro-->
         <slot name="actions"></slot>
       </v-card-title>
-      <v-data-table :headers="headers" :items="items" class="elevation-1">
+      <template v-slot:text>
+          <v-text-field
+            v-model="search"
+            label="Search"
+            prepend-icon="mdi-magnify"
+            variant="solo"
+            hide-details
+            single-line
+          ></v-text-field>
+      </template>
+      <v-data-table 
+      :headers="headers" 
+      :items="items.data" 
+      class="elevation-1"
+      :items-per-page="10"
+      :search="search"
+      hide-default-footer>
         <!--area para o botão dos items-->
         <template v-slot:item.actions="{ item }">
           <slot name="item-actions" :item="item"></slot>
+        </template>
+
+        <template v-slot:bottom>
+          <v-pagination
+            v-model="items.current_page"
+            :length="items.last_page"
+            rounded="circle"
+            @update:model-value="page => { // Atualiza a variável localmente se precisar (embora Inertia/backend fará isso)
+              router.get(route('pessoas.index', { page }))
+              }"
+          ></v-pagination>
         </template>
       </v-data-table>
     </v-card>
@@ -20,11 +47,16 @@
 </template>
 
 <script setup>
-  import { defineProps } from 'vue';
+  import { defineProps, ref } from 'vue';
+  import { router } from '@inertiajs/vue3';
   //props para table default
+
+  //pesquisa
+  const search = ref('');
+
   const props = defineProps({
     items: {
-      type: Array,
+      type: Object,
       required: true,
     },
     headers:{

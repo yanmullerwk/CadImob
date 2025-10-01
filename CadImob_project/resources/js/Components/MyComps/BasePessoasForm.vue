@@ -1,12 +1,31 @@
 <template>
   <v-card class="pa-6 " width="1000" elevation="8">
+    <v-card-title>
+       <div class="d-flex align-center">
+          <Link :href="route('pessoas.index')">
+            <v-btn 
+            icon 
+            rounded="circle"
+            color="grey" 
+            size="small" 
+            class="mr-5"
+            >
+              <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
+          </Link>
+          <slot name="title">
+            <span class="text-h6 ml-2">{{ titleForm }}</span>
+          </slot>
+        </div>
+        <br/>
+    </v-card-title>
     <form @submit.prevent="submit">
       <v-row>
         <v-col>
           <v-text-field 
           v-model="form.nome" 
           label="Nome" 
-          variant="solo-filled"
+          variant="solo"
           @change="form.validate('nome')" 
           required
           ></v-text-field>
@@ -18,8 +37,9 @@
           <v-text-field 
           v-model="form.cpf" 
           label="CPF" 
-          variant="solo-filled" 
+          variant="solo" 
           @change="form.validate('cpf')"
+          :disabled="isEdit"
           required
           ></v-text-field>
           <div v-if="form.invalid('cpf')">
@@ -33,7 +53,7 @@
           <v-text-field 
             v-model="form.dataNascimento"
             label="Data Nascimento"
-            type="date" variant="solo-filled"
+            type="date" variant="solo"
             @change="form.validate('dataNascimento')"
             required
             ></v-text-field>
@@ -44,15 +64,15 @@
         <v-col>
           <v-select 
           v-model="form.sexo"
-          label="Select" :items="[
-          { text: 'Masculino', value: 'M' },
-          { text: 'Feminino', value: 'F' },
-          { text: 'Outro', value: 'O' }
+          label="Sexo" :items="[
+          { text: 'Masculino', value: 'Masculino' },
+          { text: 'Feminino', value: 'Feminino' },
+          { text: 'Outro', value: 'Outro' }
           ]"
           item-title="text"
           item-value="value"
           @change="form.validate('sexo')"
-          variant="solo-filled"
+          variant="solo"
           ></v-select>
           <div v-if="form.invalid('sexo')">
             {{ form.errors.sexo }}
@@ -64,8 +84,8 @@
         <v-col>
           <v-text-field 
           v-model="form.telefone" 
-          label="Telefone" 
-          variant="solo-filled"
+          label="Telefone (Opcional)" 
+          variant="solo"
           @change="form.validate('telefone')"
           ></v-text-field>
           <div v-if="form.invalid('telefone')">
@@ -75,9 +95,9 @@
         <v-col>
           <v-text-field 
           v-model="form.email" 
-          label="E-mail" 
+          label="E-mail (Opcional)" 
           type="email" 
-          variant="solo-filled"
+          variant="solo"
           @change="form.validate('email')"
           ></v-text-field>
           <div v-if="form.invalid('email')">
@@ -89,11 +109,16 @@
         {{ isEdit ? 'Atualizar' : 'Cadastrar' }}
       </v-btn>
     </form>
+    
+
+    
   </v-card>
 </template>
 
 <script setup>
 import { useForm } from 'laravel-precognition-vue-inertia';
+import { Link } from '@inertiajs/vue3';
+import DialogSuccess from './DialogSuccess.vue';
 
 const props = defineProps({
   pessoa: {
@@ -104,6 +129,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  titleForm:{
+      type: String,
+      default: 'Formulario',
+    },
 })
 
 // se for edição

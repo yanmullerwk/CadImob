@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\CpfRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePessoasRequest extends FormRequest
@@ -24,8 +25,8 @@ class StorePessoasRequest extends FormRequest
         return [
             'nome' => ['required', 'string', 'max:255'],
             'dataNascimento' => ['required', 'date'],
-            'cpf' => ['required', 'numeric', 'unique:pessoas,cpf'], // CPF único na tabela
-            'sexo' => ['required', 'string', 'in:M,F,O'],
+            'cpf' => ['required', 'numeric', 'unique:pessoas,cpf', new CpfRule], // CPF único na tabela
+            'sexo' => ['required', 'string', 'in:Masculino,Feminino,Outro'],
             'telefone' => ['nullable', 'numeric'],
             'email' => ['nullable', 'string','email:rfc,dns'],
         ];
@@ -34,7 +35,10 @@ class StorePessoasRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'nome.required'=>'O campo nome é obrigatorio!',
+            'nome.required'=>'O campo NOME é obrigatorio!',
+            'dataNascimento.required'=>"O campo DATA DE NASCIMENTO é obrigatorio!",
+            'cpf.required'=>'O campo CPF é obrigatorio!',
+            'sexo.required'=>'O campo SEXO é obrigatorio!',
         ];
     }
 }

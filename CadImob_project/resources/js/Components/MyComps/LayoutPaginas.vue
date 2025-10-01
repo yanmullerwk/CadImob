@@ -7,8 +7,10 @@
                 </v-list-item>
 
             <!--colocar o link pra home-->
+            <Link :href="route('home.index')">
                 <v-list-item prepend-icon="mdi-home" title="Home"></v-list-item>
-
+            </Link>
+                
             <!--vvv Aqui linka para table pessoas vvv-->
                 <Link :href="route('pessoas.index')">
                     <v-list-item prepend-icon="mdi-clipboard-account-outline" title="Pessoas"></v-list-item>
