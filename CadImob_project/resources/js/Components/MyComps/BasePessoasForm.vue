@@ -109,16 +109,31 @@
         {{ isEdit ? 'Atualizar' : 'Cadastrar' }}
       </v-btn>
     </form>
-    
-
-    
   </v-card>
-</template>
+  <v-dialog v-model="showSuccess" min-height="200" max-width="500">
+      <v-card>
+        <v-card-title class="text-h6">Sucesso!</v-card-title>
+        <v-card-text>
+          {{ isEdit 
+          ? ('Pessoa foi editada com sucesso') 
+          : ('Pessoa foi cadastrada com sucesso') }}
+        </v-card-text>
+        <v-card-actions>
+          <Link :href="route('pessoas.index')">
+            <v-btn color="secondary" @click="">voltar para tabela</v-btn>
+          </Link>
+          <v-btn color="primary" @click="showSuccess = false">{{ isEdit ? 'Continuar editando' : 'Continuar cadastrando' }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+</template> 
 
 <script setup>
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { Link } from '@inertiajs/vue3';
-import DialogSuccess from './DialogSuccess.vue';
+import { ref, defineProps } from 'vue';
+
+const showSuccess = ref(false)
 
 const props = defineProps({
   pessoa: {
@@ -162,6 +177,7 @@ const submit = () => {
       if (!props.isEdit) {
         form.reset()
       }
+      showSuccess.value = true
     },
   })
 }

@@ -1,77 +1,113 @@
 <template>
     <v-app>
-        <LayoutPaginas >
+        <LayoutPaginas>
             <DefaultTable :headers="headers" :items="pessoas" name-table="Tabela Pessoas">
                 <template #actions>
-                    <!--Usa aqule slot pra por esse botão-->
+                    <!-- Botão de cadastrar -->
                     <v-btn color="primary" prepend-icon="mdi-plus" @click="goToCreate">
                         Cadastrar
                     </v-btn>
                 </template>
 
                 <template #item-actions="{ item }">
-
                     <v-btn 
-                    color="info"
-                    size="small"
-                    class="mr-2"
-                    @click="goToEdit(item)">
+                        color="info"
+                        size="small"
+                        class="mr-2"
+                        @click="goToEdit(item)">
                         <v-icon small class="mr-2">mdi-pencil</v-icon>
                         Editar
                     </v-btn>
                     <v-btn 
-                    color="error" 
-                    size="small"
-                    class="mr-2"
-                    @click="deleteItem(item)">
+                        color="error" 
+                        size="small"
+                        class="mr-2"
+                        @click="openConfirm(item)">
                         <v-icon>mdi-delete</v-icon>
                         Deletar
                     </v-btn>
                 </template>
             </DefaultTable>
+
+            <!-- Dialogo de confirmação -->
+            <v-dialog v-model="showConfirm" max-width="400">
+                <v-card>
+                    <v-card-title class="text-h6">Confirmar exclusão</v-card-title>
+                    <v-card-text>
+                        Tem certeza que deseja excluir o item <b>{{ currentItem?.nome }}</b>?
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn text @click="showConfirm = false">Cancelar</v-btn>
+                        <v-btn color="red" @click="deleteItem">Excluir</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+
+            <!-- Dialogo de sucesso -->
+            <v-dialog v-model="showSuccess" max-width="400">
+                <v-card>
+                    <v-card-title class="text-h6">Sucesso!</v-card-title>
+                    <v-card-text>
+                        O item foi excluído com sucesso.
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="primary" @click="showSuccess = false">Ok</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
         </LayoutPaginas>
     </v-app>
 </template>
+
 <script setup>
-    import LayoutPaginas from '@/Components/MyComps/LayoutPaginas.vue';
-    import { computed, defineProps, ref } from "vue";
-    import { router, Link } from '@inertiajs/vue3';
-    import DefaultTable from '@/Components/MyComps/DefaultTable.vue';
+import LayoutPaginas from '@/Components/MyComps/LayoutPaginas.vue';
+import { ref, defineProps } from "vue";
+import { router } from '@inertiajs/vue3';
+import DefaultTable from '@/Components/MyComps/DefaultTable.vue';
 
-    //essas props vem la do controller
-    const props = defineProps ({
-    pessoas: Object,
-    });
+const showConfirm = ref(false)
+const showSuccess = ref(false)
+const currentItem = ref(null)
 
-    const headers = ref([
-        { title: 'ID', key: 'id' },
-        { title: 'Nome', key: 'nome' },
-        { title: 'cpf', key: 'cpf' },
-        { title: 'Data Nasc.', key: 'dataNascimento' },
-        { title: 'Sexo', key: 'sexo'},
-        { title: 'Ações', key: 'actions', sortable: false },
-    ]);
-    
-    function goToCreate(){
-        router.get(route('pessoas.create'));
-    }
+// props do controller
+const props = defineProps({
+  pessoas: Object,
+});
 
-    function goToEdit(item){
-        router.get(route('pessoas.edit', item.id))
-    }
+const headers = ref([
+    { title: 'ID', key: 'id' },
+    { title: 'Nome', key: 'nome' },
+    { title: 'cpf', key: 'cpf' },
+    { title: 'Data Nasc.', key: 'dataNascimento' },
+    { title: 'Sexo', key: 'sexo'},
+    { title: 'Ações', key: 'actions', sortable: false },
+]);
 
-    function deleteItem(item) {
-    if (!confirm(`Tem certeza que deseja excluir?`)) return;
+function goToCreate(){
+    router.get(route('pessoas.create'));
+}
 
-    router.delete(route('pessoas.destroy', item.id), {
+function goToEdit(item){
+    router.get(route('pessoas.edit', item.id))
+}
+
+function openConfirm(item) {
+    currentItem.value = item
+    showConfirm.value = true
+}
+
+function deleteItem() {
+    router.delete(route('pessoas.destroy', currentItem.value.id), {
         onSuccess: () => {
-            alert('Item excluído com sucesso!');
+            showConfirm.value = false
+            showSuccess.value = true
         },
         onError: (errors) => {
-            console.error(errors);
-            alert('Erro ao excluir item.');
+            console.error(errors)
+            alert('Erro ao excluir item.')
         }
     }); 
-    }
-
+}
 </script>
