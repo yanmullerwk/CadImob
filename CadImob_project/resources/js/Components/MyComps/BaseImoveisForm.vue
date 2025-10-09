@@ -49,6 +49,7 @@
             variant="solo"
             type="number"
             min="0"
+            step="0.01"
             @change="form.validate('areaEdificacao')"
           ></v-text-field>
           <div v-if="form.invalid('areaEdificacao')">
@@ -64,6 +65,7 @@
             label="Área do Terreno (m²)" 
             variant="solo" 
             type="number"
+            step="0.01"
             min="0"
             @change="form.validate('areaTerreno')"
           ></v-text-field>
@@ -92,6 +94,7 @@
             v-model="form.numero" 
             label="Número" 
             variant="solo"
+            type="number"
             @change="form.validate('numero')"
             required
           ></v-text-field>

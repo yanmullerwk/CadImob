@@ -37,7 +37,7 @@ class PessoasController extends Controller
 
     public function update(UpdatePessoasRequest $request, $id){
         $pessoa = Pessoa::findOrFail($id);
-
+    
         // pega só os dados validados
         $dados = $request->validated();
 
