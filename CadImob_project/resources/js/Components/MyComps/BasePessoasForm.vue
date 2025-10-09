@@ -130,7 +130,7 @@
 
 <script setup>
 import { useForm } from 'laravel-precognition-vue-inertia';
-import { Link } from '@inertiajs/vue3';
+import { Link, Head } from '@inertiajs/vue3';
 import { ref, defineProps } from 'vue';
 
 const showSuccess = ref(false)

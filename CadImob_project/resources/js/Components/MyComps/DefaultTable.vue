@@ -1,6 +1,6 @@
 <template>
   <v-container> <!--Esse card to usando muito-->
-    <v-card class="pa-6 " width="1000" elevation="8">
+    <v-card class="pa-6 " max-width="1500" elevation="8">
       <v-card-title class="d-flex">
         <slot name="title">
           <span class="text-h6">{{ nameTable }}</span>
@@ -28,9 +28,12 @@
       hide-default-footer>
         <!--area para o botão dos items-->
         <template v-slot:item.actions="{ item }">
-          <slot name="item-actions" :item="item"></slot>
+          <div class="flex space-x-2">
+            <slot name="item-actions" :item="item"></slot>
+          </div>
         </template>
 
+        <!--aqui é a paginação-->
         <template v-slot:bottom>
           <v-pagination
             v-model="items.current_page"

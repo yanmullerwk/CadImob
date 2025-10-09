@@ -16,8 +16,10 @@
                     <v-list-item prepend-icon="mdi-clipboard-account-outline" title="Pessoas"></v-list-item>
                 </Link>
             <!--^^^ Aqui linka para table pessoas ^^^^-->
-        
-                <v-list-item prepend-icon="mdi-home-group" title="Imóveis"></v-list-item>
+                <Link :href="route('imoveis.index')">
+                    <v-list-item prepend-icon="mdi-home-group" title="Imóveis"></v-list-item>
+                </Link>
+                
                 <v-list-item prepend-icon="mdi-card-account-details" title="Usuários"></v-list-item>
                 <v-list-item prepend-icon="mdi-cog" title="Configurações"></v-list-item>
             </v-list>
@@ -29,7 +31,7 @@
         </v-app-bar>
     <!--esse é o meu main com um card alinhado no centro da pagina-->
         <v-main>
-            <v-container class="d-flex justify-center align-center" style="min-height: calc(100vh - 64px);">
+            <v-container  fluid class="pa-0 d-flex justify-center align-center" style="min-height: calc(100vh - 64px);">
                 <slot/>
             </v-container>
         </v-main>

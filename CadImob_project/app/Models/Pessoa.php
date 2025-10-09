@@ -14,4 +14,9 @@ class Pessoa extends Model
         'nome', 'dataNascimento', 'cpf', 'sexo', 'telefone', 'email',
     ];
 
+    public function imoveis()
+    {
+        return $this->hasMany(Imovel::class, 'contribuinte_id');
+    }
+
 }

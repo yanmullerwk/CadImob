@@ -1,4 +1,5 @@
 <template>
+    <Head title="Edição"/>
     <v-app>
         <LayoutPaginas>
             <BasePessoasForm :isEdit="true" :pessoa="pessoa" :titleForm="formName"/>
@@ -8,6 +9,7 @@
 <script setup>
 import LayoutPaginas from '@/Components/MyComps/LayoutPaginas.vue';
 import BasePessoasForm from '@/Components/MyComps/BasePessoasForm.vue';
+import { Head } from '@inertiajs/vue3';
 const props = defineProps({
     pessoa: Object
 });

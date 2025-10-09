@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <LayoutPaginas>
-            <h1>Bem Vindo à CadIMob</h1>
+            <h1 class="text-h4">Bem Vindo à CadIMob</h1>
         </LayoutPaginas>
     </v-app>
 </template>

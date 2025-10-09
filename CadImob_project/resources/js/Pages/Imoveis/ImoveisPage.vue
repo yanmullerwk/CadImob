@@ -1,8 +1,8 @@
 <template>
-    <Head title="Pessoas"/>
+    <Head title="Imoveis"/>
     <v-app>
         <LayoutPaginas>
-            <DefaultTable :headers="headers" :items="pessoasFormatadas" name-table="Tabela Pessoas">
+            <DefaultTable :headers="headers" :items="imoveis" name-table="Tabela Imoveis">
                 <template #actions>
                     <!-- Botão de cadastrar -->
                     <v-btn color="primary" prepend-icon="mdi-plus" @click="goToCreate">
@@ -61,10 +61,9 @@
         </LayoutPaginas>
     </v-app>
 </template>
-
 <script setup>
 import LayoutPaginas from '@/Components/MyComps/LayoutPaginas.vue';
-import { ref, defineProps, computed } from "vue";
+import { ref, defineProps} from "vue";
 import { router, Head } from '@inertiajs/vue3';
 import DefaultTable from '@/Components/MyComps/DefaultTable.vue';
 
@@ -72,58 +71,29 @@ const showConfirm = ref(false)
 const showSuccess = ref(false)
 const currentItem = ref(null)
 
-// props do controller
+
 const props = defineProps({
-  pessoas: Object,
-});
-
-// Cria uma propriedade computada (reativa) chamada 'pessoasFormatadas'.
-// Ela depende de 'props.pessoas' e será atualizada automaticamente
-// sempre que o valor de 'props.pessoas' mudar (ex: ao paginar ou atualizar a lista).
-const pessoasFormatadas = computed(() => ({
-    // Aqui copiamos todas as propriedades originais do objeto 'props.pessoas'
-    // Isso garante que a paginação (meta, links, etc.) continue funcionando normalmente.
-  ...props.pessoas,
-
-  
-  // Agora reescrevemos apenas o campo 'data'
-  // 'data' é o array com as pessoas vindas do back-end.
-  // Usamos 'map' para percorrer cada pessoa e criar uma nova lista formatada.
-  data: props.pessoas.data.map(p => ({
-    // Espalhamos os dados originais da pessoa (id, nome, cpf, etc.)
-    ...p,
-    // Formatadores
-    cpf: formatCPF(p.cpf),
-    dataNascimento: formatData(p.dataNascimento)
-  }))
-}))
-
-function formatCPF(cpf) {
-  if (!cpf) return ''
-  return cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4')
-}
-
-function formatData(data) {
-  if (!data) return ''
-  const d = new Date(data)
-  return d.toLocaleDateString('pt-BR', { timeZone: 'UTC' })
-}
+    imoveis: Object
+})
 
 const headers = ref([
-    { title: 'ID', key: 'id' },
-    { title: 'Nome', key: 'nome' },
-    { title: 'cpf', key: 'cpf' },
-    { title: 'Data Nasc.', key: 'dataNascimento' },
-    { title: 'Sexo', key: 'sexo'},
+    { title: 'ins. municipal', key: 'id' },
+    { title: 'Tipo', key: 'tipo' },
+    { title: 'Logradouro', key: 'logradouro' },
+    { title: 'Numero', key: 'numero'},
+    { title: 'Bairro', key: 'bairro'},
+    { title: 'Complemento', key: 'complemento'},
+    { title: 'Contribuinte', key: 'contribuinte_id'},
     { title: 'Ações', key: 'actions', sortable: false },
 ]);
 
+
 function goToCreate(){
-    router.get(route('pessoas.create'));
+    router.get(route('imoveis.create'));
 }
 
 function goToEdit(item){
-    router.get(route('pessoas.edit', item.id))
+    router.get(route('imoveis.edit', item.id))
 }
 
 function openConfirm(item) {
@@ -132,7 +102,7 @@ function openConfirm(item) {
 }
 
 function deleteItem() {
-    router.delete(route('pessoas.destroy', currentItem.value.id), {
+    router.delete(route('imoveis.destroy', currentItem.value.id), {
         onSuccess: () => {
             showConfirm.value = false
             showSuccess.value = true
