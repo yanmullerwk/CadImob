@@ -52,7 +52,7 @@
       <v-pagination
         v-model="page"
         :length="audits.last_page"
-        @input="changePage"
+        @update:modelValue="changePage"
         class="mt-4"
       />
     </v-card>
