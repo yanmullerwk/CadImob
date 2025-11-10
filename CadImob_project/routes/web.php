@@ -42,7 +42,7 @@ Route::middleware(['auth', 'isActivate'])->group(function () {
 
     // pessoas
     Route::prefix('pessoas')->group(function(){
-        Route::get('/', [PessoasController::class, 'index'])->name('pessoas.index')->middleware('profile:T')->middleware('profile:T,S,A');
+        Route::get('/', [PessoasController::class, 'index'])->name('pessoas.index')->middleware('profile:T,S,A');
         Route::get('/create', [PessoasController::class, 'create'])->name('pessoas.create')->middleware('profile:T,S,A');
         Route::post('/',[PessoasController::class, 'store'])->name('pessoas.store')->middleware([HandlePrecognitiveRequests::class])->middleware('profile:T,S,A');
         Route::put('/{id}', [PessoasController::class, 'update'])->name('pessoas.update')->middleware([HandlePrecognitiveRequests::class])->middleware('profile:T,S,A');
@@ -84,9 +84,9 @@ Route::middleware(['auth', 'isActivate'])->group(function () {
         Route::get('/{id}',[ReportsController::class, 'individualReport'])->name('report.individual');
     });
 
-    Route::prefix('auditoria')->middleware(['auth'])->group(function () {
-        Route::get('/', [AuditController::class, 'index'])->name('auditoria.index');
-        Route::get('/{id}', [AuditController::class, 'show'])->name('auditoria.show');
+    Route::prefix('auditoria')->group(function () {
+        Route::get('/', [AuditController::class, 'index'])->name('auditoria.index')->middleware('profile:T,S,A');
+        Route::get('/{id}', [AuditController::class, 'show'])->name('auditoria.show')->middleware('profile:T,S,A');
     });
 
 

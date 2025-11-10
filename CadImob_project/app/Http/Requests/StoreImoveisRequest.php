@@ -33,7 +33,7 @@ class StoreImoveisRequest extends FormRequest
             'bairro' => ['required', 'string', 'max:255'],
             'complemento' => ['nullable', 'string', 'max:255'],
             'contribuinte_id' => ['required', 'exists:pessoas,id'], // FK
-            'situação' => ['nullable', 'string', 'in:ATIVO,INATIVO'],
+            'situacao' => ['nullable', 'string', 'in:ATIVO,INATIVO'],
             'documents'=> ['nullable', 'array', 'max:5'],
             'documents.*'=>['file', 'mimes:jpg,jpeg,png,pdf', 'max:3072']
         ];

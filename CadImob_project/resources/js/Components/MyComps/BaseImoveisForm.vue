@@ -313,7 +313,7 @@ const form = props.isEdit
       bairro: '',
       complemento: '',
       contribuinte_id: '',
-      situacao: 'ATIVA',
+      situacao: 'ATIVO',
       documents: [],
     });
 
