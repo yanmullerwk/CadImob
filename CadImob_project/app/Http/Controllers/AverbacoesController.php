@@ -36,6 +36,7 @@ class AverbacoesController extends Controller
         $measure = $validated['measure'];
         $imovelType = $imovel->tipo;
         $areaAtual = $imovel->areaEdificacao;
+        $areaTerreno = $imovel->areaTerreno;
         $situacaoAtual = $imovel->situacao;
 
         if ($event === 'Cancelamento') {
@@ -46,18 +47,25 @@ class AverbacoesController extends Controller
             }
             $imovel->update(['situacao' => 'INATIVO']);
         } elseif ($event === 'Aumento' && $measure) {
+            $areaAmpliada = $areaAtual + $measure;
             if($imovelType === 'Terreno'){
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'eventType' => "Não é possível aumentar a area de edificação de um terreno."
                 ]);
             }
-            $imovel->update(['areaEdificacao' => $areaAtual + $measure]);
+            if($areaAmpliada > $areaTerreno){
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'eventType' => "Não é possível deixar a area de edificação maior que o terreno"
+                ]);
+            }
+            $imovel->update(['areaEdificacao' => $areaAmpliada]);
         } elseif ($event === 'Reducao' && $measure) {
             if($imovelType === 'Terreno'){
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'eventType' => "Não é possível reduzir a area de edificação de um terreno."
                 ]);
             }
+
             $imovel->update(['areaEdificacao' => max(0, $areaAtual - $measure)]);
         } elseif ($event === 'Reativacao') {
             if($situacaoAtual === 'ATIVO'){
