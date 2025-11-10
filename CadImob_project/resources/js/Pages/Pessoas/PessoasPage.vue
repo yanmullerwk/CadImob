@@ -2,7 +2,7 @@
     <Head title="Pessoas"/>
     <v-app>
         <LayoutPaginas>
-            <DefaultTable :headers="headers" :items="pessoasFormatadas" name-table="Tabela Pessoas">
+            <DefaultTable :headers="headers" :items="pessoasFormatadas" name-table="Tabela Pessoas" :route-name="routeName">
                 <template #actions>
                     <!-- Botão de cadastrar -->
                     <v-btn color="primary" prepend-icon="mdi-plus" @click="goToCreate">
@@ -71,7 +71,7 @@ import DefaultTable from '@/Components/MyComps/DefaultTable.vue';
 const showConfirm = ref(false)
 const showSuccess = ref(false)
 const currentItem = ref(null)
-
+const routeName = 'pessoas.index'
 // props do controller
 const props = defineProps({
   pessoas: Object,
@@ -81,7 +81,7 @@ const props = defineProps({
 // Ela depende de 'props.pessoas' e será atualizada automaticamente
 // sempre que o valor de 'props.pessoas' mudar (ex: ao paginar ou atualizar a lista).
 const pessoasFormatadas = computed(() => ({
-    // Aqui copiamos todas as propriedades originais do objeto 'props.pessoas'
+    //copia todas as propriedades originais do objeto 'props.pessoas'
     // Isso garante que a paginação (meta, links, etc.) continue funcionando normalmente.
   ...props.pessoas,
 
@@ -102,6 +102,8 @@ function formatCPF(cpf) {
   if (!cpf) return ''
   return cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4')
 }
+
+
 
 function formatData(data) {
   if (!data) return ''

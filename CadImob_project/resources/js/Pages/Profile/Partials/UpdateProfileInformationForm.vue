@@ -1,112 +1,242 @@
 <script setup>
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { ref } from 'vue'
+import { Link, useForm } from '@inertiajs/vue3'
+import LayoutPaginas from '@/Components/MyComps/LayoutPaginas.vue'
+import InputLabel from '@/Components/InputLabel.vue'
+import TextInput from '@/Components/TextInput.vue'
+import InputError from '@/Components/InputError.vue'
+import PrimaryButton from '@/Components/PrimaryButton.vue'
+import { computed } from 'vue'
 
-defineProps({
-    mustVerifyEmail: {
-        type: Boolean,
+
+const PROFILE_TI = 'T'
+
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true,
+  },
+  userLoggedId: { // Nome da prop em camelCase no script
+        type: [String, Number], // Assumindo que o ID é string ou number
+        required: true,
     },
-    status: {
-        type: String,
+    userProfile: { // Nome da prop em camelCase no script
+        type: [String, Number], // Assumindo que o perfil é string ou number
+        required: true,
     },
+})
+
+const showEditOption = computed(() => {
+    // Acessando as props usando "props."
+    return props.userProfile == PROFILE_TI && props.userLoggedId != props.user.id;
 });
 
-const user = usePage().props.auth.user;
-
+     
+// form já vem com dados do user
 const form = useForm({
-    name: user.name,
-    email: user.email,
-});
+  name: props.user.name || '',
+  email: props.user.email || '',
+  cpf: props.user.cpf || '',
+  profile: props.user.profile || '',
+})
+
+
+
+
+const showSuccess = ref(false)
+const showError = ref(false)
+const errorMessage = ref('')
+
+const submit = () => {
+  form.put(route('user.update', props.user.id), {
+    onSuccess: () => {
+      showSuccess.value = true
+    },
+    onError: (errors) => {
+      showError.value = true
+      errorMessage.value = Object.values(errors)[0] || 'Erro ao atualizar'
+    },
+  })
+}
 </script>
 
 <template>
-    <section>
-        <header>
-            <h2 class="text-lg font-medium text-gray-900">
-                Profile Information
-            </h2>
+      <v-card
+        width="1000"
+        elevation="0"
+      >
+        <Link :href="route('users.index')">
+          <v-btn
+            icon
+            rounded="circle"
+            color="grey"
+            size="small"
+            class="mr-5 mb-4"
+          >
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+        </Link>
 
-            <p class="mt-1 text-sm text-gray-600">
-                Update your account's profile information and email address.
-            </p>
-        </header>
+        <form @submit.prevent="submit" class="p-6 rounded-md">
+          <!-- NOME -->
+          <div>
+            <InputLabel for="name" value="Nome" />
+            <TextInput
+              id="name"
+              type="text"
+              class="mt-1 block w-full border border-gray-300 rounded-md focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+              v-model="form.name"
+              required
+              autofocus
+            />
+            <InputError class="mt-2" :message="form.errors.name" />
+          </div>
 
-        <form
-            @submit.prevent="form.patch(route('profile.update'))"
-            class="mt-6 space-y-6"
-        >
-            <div>
-                <InputLabel for="name" value="Name" />
+          <!-- EMAIL -->
+          <div class="mt-4">
+            <InputLabel for="email" value="Email" />
+            <TextInput
+              id="email"
+              type="email"
+              class="mt-1 block w-full border border-gray-300 text-grey-100"
+              v-model="form.email"
+              disabled
+              required
+            />
+            <InputError class="mt-2" :message="form.errors.email" />
+          </div>
 
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
+          <!-- CPF -->
+          <div class="mt-4">
+            <InputLabel for="cpf" value="CPF" />
+            <TextInput
+              id="cpf"
+              type="text"
+              v-model="form.cpf"
+              v-mask="'###.###.###-##'"
+              required
+              disabled
+              class="mt-1 block w-full border border-gray-300 rounded-md focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+            />
+            <InputError class="mt-2" :message="form.errors.cpf" />
+          </div>
+
+          <!-- PERFIL -->
+          <div class="mt-4">
+            <InputLabel value="Perfil" />
+
+            <div v-if="showEditOption" class="flex flex-col gap-2 mt-2">
+              <label class="flex items-center cursor-pointer text-base text-gray-600">
+                <input
+                  type="radio"
+                  name="profile"
+                  value="T"
+                  v-model="form.profile"
+                  class="mr-2 accent-indigo-600 focus:ring-indigo-500 border"
                 />
+                Administrador TI
+              </label>
 
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
-
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
+              <label class="flex items-center cursor-pointer text-base text-gray-600">
+                <input
+                  type="radio"
+                  name="profile"
+                  value="S"
+                  v-model="form.profile"
+                  class="mr-2 accent-indigo-600 focus:ring-indigo-500 border"
                 />
+                Administrador Sistema
+              </label>
 
-                <InputError class="mt-2" :message="form.errors.email" />
+              <label class="flex items-center cursor-pointer text-base text-gray-600">
+                <input
+                  type="radio"
+                  name="profile"
+                  value="A"
+                  v-model="form.profile"
+                  class="mr-2 accent-indigo-600 focus:ring-indigo-500 border"
+                />
+                Atendente
+              </label>
+            </div>
+            <div v-else>
+                <label class="flex items-center cursor-pointer text-base text-gray-600">
+                <input
+                  type="radio"
+                  name="profile"
+                  value="T"
+                  disabled
+                  v-model="form.profile"
+                  class="mr-2 accent-indigo-600 focus:ring-indigo-500 border"
+                />
+                Administrador TI
+              </label>
+
+              <label class="flex items-center cursor-pointer text-base text-gray-600">
+                <input
+                  type="radio"
+                  name="profile"
+                  value="S"
+                  disabled
+                  v-model="form.profile"
+                  class="mr-2 accent-indigo-600 focus:ring-indigo-500 border"
+                />
+                Administrador Sistema
+              </label>
+
+              <label class="flex items-center cursor-pointer text-base text-gray-600">
+                <input
+                  type="radio"
+                  name="profile"
+                  value="A"
+                  disabled
+                  v-model="form.profile"
+                  class="mr-2 accent-indigo-600 focus:ring-indigo-500 border"
+                />
+                Atendente
+              </label>
             </div>
 
-            <div v-if="mustVerifyEmail && user.email_verified_at === null">
-                <p class="mt-2 text-sm text-gray-800">
-                    Your email address is unverified.
-                    <Link
-                        :href="route('verification.send')"
-                        method="post"
-                        as="button"
-                        class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        Click here to re-send the verification email.
-                    </Link>
-                </p>
+            <InputError class="mt-2" :message="form.errors.profile" />
+          </div>
 
-                <div
-                    v-show="status === 'verification-link-sent'"
-                    class="mt-2 text-sm font-medium text-green-600"
-                >
-                    A new verification link has been sent to your email address.
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p
-                        v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600"
-                    >
-                        Saved.
-                    </p>
-                </Transition>
-            </div>
+          <!-- BOTÕES -->
+          <div class="mt-6 flex items-center justify-end">
+            <PrimaryButton
+              class="ms-4"
+              :class="{ 'opacity-25': form.processing }"
+              :disabled="form.processing"
+            >
+              Atualizar
+            </PrimaryButton>
+          </div>
         </form>
-    </section>
+      </v-card>
+
+      <!-- Dialog de sucesso -->
+      <v-dialog v-model="showSuccess" min-height="200" max-width="500">
+        <v-card>
+          <v-card-title class="text-h6">Sucesso!</v-card-title>
+          <v-card-text>Usuário atualizado com sucesso.</v-card-text>
+          <v-card-actions>
+            <Link :href="route('users.index')">
+              <v-btn color="secondary">Voltar</v-btn>
+            </Link>
+            <v-btn color="primary" @click="showSuccess = false">
+              Continuar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- Dialog de erro -->
+      <v-dialog v-model="showError" min-height="200" max-width="500">
+        <v-card>
+          <v-card-title class="text-h6">Erro</v-card-title>
+          <v-card-text>{{ errorMessage }}</v-card-text>
+          <v-card-actions>
+            <v-btn color="secondary" @click="showError = false">Fechar</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 </template>

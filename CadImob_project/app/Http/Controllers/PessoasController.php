@@ -26,8 +26,7 @@ class PessoasController extends Controller
     }
 
     public function store(StorePessoasRequest $request){//fazer o request especifico para validar
-        $pessoa = $request->validated();
-        Pessoa::create($pessoa);
+        Pessoa::create($request->validated());
     }
 
     public function edit($id){

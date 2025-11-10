@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-class Pessoa extends Model
+use OwenIt\Auditing\Contracts\Auditable;
+ 
+class Pessoa extends Model implements Auditable
 {
-     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
+    use HasFactory;
 
     // Campos que podem ser preenchidos em massa (security first!)
     protected $fillable = [
@@ -16,7 +18,7 @@ class Pessoa extends Model
 
     public function imoveis()
     {
-        return $this->hasMany(Imovel::class, 'contribuinte_id');
+        return $this->hasMany(Imovel::class);
     }
 
 }

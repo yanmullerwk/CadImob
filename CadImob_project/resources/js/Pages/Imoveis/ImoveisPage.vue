@@ -2,13 +2,20 @@
     <Head title="Imoveis"/>
     <v-app>
         <LayoutPaginas>
-            <DefaultTable :headers="headers" :items="imoveis" name-table="Tabela Imoveis">
+            <DefaultTable :headers="headers" :items="imoveis" name-table="Tabela Imoveis" route-name="imoveis.index">
                 <template #actions>
                     <!-- Botão de cadastrar -->
                     <v-btn color="primary" prepend-icon="mdi-plus" @click="goToCreate">
                         Cadastrar
                     </v-btn>
+                    <v-btn color="green" prepend-icon="mdi-file-download-outline" @click="generateReport" class="ml-1">
+                        Gerar relatorio
+                    </v-btn>
                 </template>
+
+                <template #col-situacao="{ item }">
+                    
+                </template> 
 
                 <template #item-actions="{ item }">
                     <v-btn 
@@ -83,7 +90,8 @@ const headers = ref([
     { title: 'Numero', key: 'numero'},
     { title: 'Bairro', key: 'bairro'},
     { title: 'Complemento', key: 'complemento'},
-    { title: 'Contribuinte', key: 'contribuinte_id'},
+    { title: 'Contribuinte', key: 'contribuinte.nome'},
+    { title: 'Situação', key: 'situacao'},
     { title: 'Ações', key: 'actions', sortable: false },
 ]);
 
@@ -112,5 +120,9 @@ function deleteItem() {
             alert('Erro ao excluir item.')
         }
     }); 
+}
+
+function generateReport(){
+    window.open(route('report.synthetic'), '_blank');
 }
 </script>

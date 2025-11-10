@@ -16,7 +16,6 @@ class CpfRule implements ValidationRule
     {
          // Remove tudo que não for número (pontos, traços, espaços etc.)
         $cpfNumeros = preg_replace('/\D/', '', $value);
-
         // Se o CPF não tiver exatamente 11 dígitos, já é inválido
         if (strlen($cpfNumeros) !== 11) {
             $fail("O campo {$attribute} deve ter 11 dígitos.");
@@ -25,7 +24,7 @@ class CpfRule implements ValidationRule
 
         // Chama a função que faz a verificação real do CPF
         if (!$this->verifyCPF($cpfNumeros)) {
-            $fail("O campo {$attribute} é inválido.");
+            $fail("O {$attribute} informado é inválido.");
         }
     }
 

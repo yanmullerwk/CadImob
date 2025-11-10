@@ -29,7 +29,7 @@
           @change="form.validate('nome')" 
           required
           ></v-text-field>
-          <div v-if="form.invalid('nome')">
+          <div class="p-2 bg-red rounded shadow-md" v-if="form.invalid('nome')">
             {{ form.errors.nome }}
         </div>
         </v-col>
@@ -40,9 +40,10 @@
           variant="solo" 
           @change="form.validate('cpf')"
           :disabled="isEdit"
+          v-mask="'###.###.###-##'"
           required
           ></v-text-field>
-          <div v-if="form.invalid('cpf')">
+          <div class="p-2 bg-red rounded shadow-md" v-if="form.invalid('cpf')">
             {{ form.errors.cpf}}
         </div>
         </v-col>
@@ -57,7 +58,7 @@
             @change="form.validate('dataNascimento')"
             required
             ></v-text-field>
-            <div v-if="form.invalid('dataNascimento')">
+            <div class="p-2 bg-red rounded shadow-md" v-if="form.invalid('dataNascimento')">
             {{ form.errors.dataNascimento }}
           </div>
         </v-col>
@@ -74,7 +75,7 @@
           @change="form.validate('sexo')"
           variant="solo"
           ></v-select>
-          <div v-if="form.invalid('sexo')">
+          <div class="p-2 bg-red rounded shadow-md" v-if="form.invalid('sexo')">
             {{ form.errors.sexo }}
         </div>
         </v-col>
@@ -86,11 +87,12 @@
           v-model="form.telefone" 
           label="Telefone (Opcional)" 
           variant="solo"
+          v-mask="['(##)####-####',' (##)#####-####']"
           @change="form.validate('telefone')"
           ></v-text-field>
-          <div v-if="form.invalid('telefone')">
+          <div class="p-2 bg-red rounded shadow-md" v-if="form.invalid('telefone')">
             {{ form.errors.telefone }}
-        </div>
+          </div>
         </v-col>
         <v-col>
           <v-text-field 
@@ -100,7 +102,7 @@
           variant="solo"
           @change="form.validate('email')"
           ></v-text-field>
-          <div v-if="form.invalid('email')">
+          <div class="p-2 bg-red rounded shadow-md" v-if="form.invalid('email')">
             {{ form.errors.email }}
         </div>
         </v-col>
@@ -110,47 +112,57 @@
       </v-btn>
     </form>
   </v-card>
+  <!-- Dialogo de sucesso -->
   <v-dialog v-model="showSuccess" min-height="200" max-width="500">
-      <v-card>
-        <v-card-title class="text-h6">Sucesso!</v-card-title>
-        <v-card-text>
-          {{ isEdit 
-          ? ('Pessoa foi editada com sucesso') 
-          : ('Pessoa foi cadastrada com sucesso') }}
-        </v-card-text>
-        <v-card-actions>
-          <Link :href="route('pessoas.index')">
-            <v-btn color="secondary" @click="">voltar para tabela</v-btn>
-          </Link>
-          <v-btn color="primary" @click="showSuccess = false">{{ isEdit ? 'Continuar editando' : 'Continuar cadastrando' }}</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-</template> 
+    <v-card>
+      <v-card-title class="text-h6">Sucesso!</v-card-title>
+      <v-card-text>
+        {{ isEdit 
+        ? 'Pessoa foi editada com sucesso' 
+        : 'Pessoa foi cadastrada com sucesso' }}
+      </v-card-text>
+      <v-card-actions>
+        <Link :href="route('pessoas.index')">
+          <v-btn color="secondary">Voltar para tabela</v-btn>
+        </Link>
+        <v-btn color="primary" @click="showSuccess = false">
+          {{ isEdit ? 'Continuar editando' : 'Continuar cadastrando' }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Dialogo de erro -->
+  <v-dialog v-model="showError" min-height="200" max-width="500">
+    <v-card>
+      <v-card-title class="text-h6">Falha</v-card-title>
+      <v-card-text>
+        {{ errorMessage }}
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="secondary" @click="showError = false">
+          Fechar
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
 
 <script setup>
-import { useForm } from 'laravel-precognition-vue-inertia';
-import { Link, Head } from '@inertiajs/vue3';
 import { ref, defineProps } from 'vue';
+import { useForm } from 'laravel-precognition-vue-inertia';
+import { Link } from '@inertiajs/vue3';
 
 const showSuccess = ref(false)
+const showError = ref(false)
+const errorMessage = ref('Ocorreu um erro ao processar o formulário.')
 
 const props = defineProps({
-  pessoa: {
-    type: Object,
-    default: () => ({}), // vazio se for create
-  },
-  isEdit: {
-    type: Boolean,
-    default: false,
-  },
-  titleForm:{
-      type: String,
-      default: 'Formulario',
-    },
+  pessoa: { type: Object, default: () => ({}) },
+  isEdit: { type: Boolean, default: false },
+  titleForm: { type: String, default: 'Formulario' },
 })
 
-// se for edição
 const form = props.isEdit
   ? useForm('put', route('pessoas.update', props.pessoa.id), {
       nome: props.pessoa?.nome,
@@ -160,7 +172,6 @@ const form = props.isEdit
       telefone: props.pessoa?.telefone,
       email: props.pessoa?.email,
     })
-  // se for criação
   : useForm('post', route('pessoas.store'), {
       nome: '',
       cpf: '',
@@ -174,12 +185,14 @@ const submit = () => {
   form.submit({
     preserveScroll: true,
     onSuccess: () => {
-      if (!props.isEdit) {
-        form.reset()
-      }
+      if (!props.isEdit) form.reset()
       showSuccess.value = true
+    },
+    onError: (errors) => {
+      // aqui você pode pegar a primeira mensagem de erro
+      errorMessage.value = Object.values(errors).flat()[0] || 'Ocorreu um erro.'
+      showError.value = true
     },
   })
 }
-
 </script>

@@ -3,22 +3,26 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
+import LayoutPaginas from '@/Components/MyComps/LayoutPaginas.vue';
 
-defineProps({
-    mustVerifyEmail: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
+
+const props = defineProps({
+    user: { 
+        type: Object,   
+        required: true,
     },
 });
+const page = usePage()
+const userProfile = page.props.auth.user.profile
+const loggedUserId = page.props.auth.user.id
+
 </script>
 
 <template>
     <Head title="Profile" />
-
-    <AuthenticatedLayout>
+    
+    <LayoutPaginas>
         <template #header>
             <h2
                 class="text-xl font-semibold leading-tight text-gray-800"
@@ -33,24 +37,24 @@ defineProps({
                     class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
                 >
                     <UpdateProfileInformationForm
-                        :must-verify-email="mustVerifyEmail"
-                        :status="status"
-                        class="max-w-xl"
+                        :user="props.user"
+                        :user-logged-id="loggedUserId"
+                        :user-profile="userProfile"
                     />
                 </div>
 
-                <div
+                <!-- <div
                     class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
                 >
                     <UpdatePasswordForm class="max-w-xl" />
-                </div>
+                </div> -->
 
                 <div
                     class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
                 >
-                    <DeleteUserForm class="max-w-xl" />
+                    <DeleteUserForm class="max-w-xl" :user="props.user"/>
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </LayoutPaginas>
 </template>

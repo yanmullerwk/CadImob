@@ -26,6 +26,23 @@
       :items-per-page="10"
       :search="search"
       hide-default-footer>
+      
+        <template v-slot:item.situacao="{item}">
+          <div>
+            <slot name="item-situacao" :item="item">
+              <div class="flex items-center justify-center gap-1">
+                <v-icon v-if="item.situacao == 'ATIVO'" color="green" size="x-small">
+                mdi-circle
+              </v-icon>
+              <v-icon v-else color="red" size="x-small">
+                mdi-circle
+              </v-icon>
+              {{ item.situacao }} 
+              </div>
+            </slot>
+          </div>
+        </template>
+
         <!--area para o botão dos items-->
         <template v-slot:item.actions="{ item }">
           <div class="flex space-x-2">
@@ -39,9 +56,7 @@
             v-model="items.current_page"
             :length="items.last_page"
             rounded="circle"
-            @update:model-value="page => { // Atualiza a variável localmente se precisar (embora Inertia/backend fará isso)
-              router.get(route('pessoas.index', { page }))
-              }"
+            @update:model-value="goToPage"
           ></v-pagination>
         </template>
       </v-data-table>
@@ -70,5 +85,12 @@
       type: String,
       default: 'Tabela',
     },
+    routeName: { 
+      type: String,
+      required: true }
   });
+
+  const goToPage = (page) => {
+  router.get(route(props.routeName, { page }))
+  }
 </script>

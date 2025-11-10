@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('dataNascimento');
             $table->string('cpf', 11)->unique();
             $table->enum('sexo',['Masculino','Feminino', 'Outro']);
-            $table->string('telefone',20)->nullable();
+            $table->string('telefone',11)->nullable();
             $table->string('email')->nullable();
             $table->timestamps();
         });

@@ -1,106 +1,97 @@
 <script setup>
-import DangerButton from '@/Components/DangerButton.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import Modal from '@/Components/Modal.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { useForm } from '@inertiajs/vue3';
-import { nextTick, ref } from 'vue';
+import DangerButton from '@/Components/DangerButton.vue'
+import SecondaryButton from '@/Components/SecondaryButton.vue'
+import Modal from '@/Components/Modal.vue'
+import { useForm } from '@inertiajs/vue3'
+import { ref } from 'vue'
 
-const confirmingUserDeletion = ref(false);
-const passwordInput = ref(null);
+const props = defineProps({
+    user: {
+        type: Object,
+        required: true,
+    },
+})
 
-const form = useForm({
-    password: '',
-});
+const confirmingToggle = ref(false)
+const form = useForm({})
 
-const confirmUserDeletion = () => {
-    confirmingUserDeletion.value = true;
-
-    nextTick(() => passwordInput.value.focus());
-};
-
-const deleteUser = () => {
-    form.delete(route('profile.destroy'), {
-        preserveScroll: true,
-        onSuccess: () => closeModal(),
-        onError: () => passwordInput.value.focus(),
-        onFinish: () => form.reset(),
-    });
-};
+const openModal = () => {
+    confirmingToggle.value = true
+}
 
 const closeModal = () => {
-    confirmingUserDeletion.value = false;
+    confirmingToggle.value = false
+    form.clearErrors()
+    form.reset()
+}
 
-    form.clearErrors();
-    form.reset();
-};
+const toggleUser = () => {
+    form.post(route('user.toggleActivate', props.user.id), {
+        preserveScroll: true,
+        onSuccess: () => closeModal(),
+    })
+}
 </script>
 
 <template>
     <section class="space-y-6">
         <header>
             <h2 class="text-lg font-medium text-gray-900">
-                Delete Account
+                {{ user.activate === 'S' ? 'Desativar Usuário' : 'Ativar Usuário' }}
             </h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Once your account is deleted, all of its resources and data will
-                be permanently deleted. Before deleting your account, please
-                download any data or information that you wish to retain.
+                {{
+                    user.activate === 'S'
+                        ? 'Ao desativar este usuário, ele perderá acesso à aplicação. No entanto, seus dados continuarão armazenados conforme a política da empresa.'
+                        : 'Ativar este usuário permitirá que ele volte a acessar a aplicação normalmente.'
+                }}
             </p>
         </header>
 
-        <DangerButton @click="confirmUserDeletion">Delete Account</DangerButton>
+        <button
+            @click="openModal"
+            class="px-4 py-2 rounded font-semibold text-white transition"
+            :class="user.activate === 'S' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
+        >
+            {{ user.activate === 'S' ? 'Desativar Conta' : 'Ativar Conta' }}
+        </button>
 
-        <Modal :show="confirmingUserDeletion" @close="closeModal">
+        <Modal :show="confirmingToggle" @close="closeModal">
             <div class="p-6">
-                <h2
-                    class="text-lg font-medium text-gray-900"
-                >
-                    Are you sure you want to delete your account?
+                <h2 class="text-lg font-medium text-gray-900">
+                    {{
+                        user.activate === 'S'
+                            ? 'Tem certeza que deseja desativar este usuário?'
+                            : 'Tem certeza que deseja ativar este usuário?'
+                    }}
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-600">
-                    Once your account is deleted, all of its resources and data
-                    will be permanently deleted. Please enter your password to
-                    confirm you would like to permanently delete your account.
+                    {{
+                        user.activate === 'S'
+                            ? 'O usuário perderá acesso à aplicação imediatamente, mas seus dados continuarão armazenados conforme as normas da empresa.'
+                            : 'O usuário voltará a ter acesso total à aplicação.'
+                    }}
                 </p>
-
-                <div class="mt-6">
-                    <InputLabel
-                        for="password"
-                        value="Password"
-                        class="sr-only"
-                    />
-
-                    <TextInput
-                        id="password"
-                        ref="passwordInput"
-                        v-model="form.password"
-                        type="password"
-                        class="mt-1 block w-3/4"
-                        placeholder="Password"
-                        @keyup.enter="deleteUser"
-                    />
-
-                    <InputError :message="form.errors.password" class="mt-2" />
-                </div>
 
                 <div class="mt-6 flex justify-end">
                     <SecondaryButton @click="closeModal">
-                        Cancel
+                        Cancelar
                     </SecondaryButton>
 
-                    <DangerButton
-                        class="ms-3"
-                        :class="{ 'opacity-25': form.processing }"
+                    <button
+                        class="ms-3 px-4 py-2 rounded text-white font-semibold transition"
+                        :class="{
+                            'bg-red-600 hover:bg-red-700': user.activate === 'S',
+                            'bg-green-600 hover:bg-green-700': user.activate === 'N',
+                            'opacity-25': form.processing,
+                        }"
                         :disabled="form.processing"
-                        @click="deleteUser"
+                        @click="toggleUser"
                     >
-                        Delete Account
-                    </DangerButton>
+                        {{ user.activate === 'S' ? 'Desativar' : 'Ativar' }}
+                    </button>
                 </div>
             </div>
         </Modal>
